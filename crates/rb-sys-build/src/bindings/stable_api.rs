@@ -4,7 +4,9 @@ use quote::ToTokens;
 
 use crate::RbConfig;
 
-const OPAQUE_STRUCTS: [&str; 4] = ["RString", "RArray", "RData", "RTypedData"];
+const OPAQUE_STRUCTS: [&str; 3] = ["RString", "RArray", "RTypedData"];
+
+const OPAQUE_STRUCTS_BEFORE_RUBY_4: [&str; 1] = ["RData"];
 
 const OPAQUE_STRUCTS_RUBY_3_3: [&str; 3] = [
     "rb_matchext_struct",
@@ -198,6 +200,10 @@ fn get_version_specific_opaque_structs(major_minor: Option<(u32, u32)>) -> Vec<&
     let mut result = vec![];
     let (major, minor) = major_minor;
 
+    if major == 3 && minor >= 3 {
+        result.extend(OPAQUE_STRUCTS_BEFORE_RUBY_4)
+    }
+
     if major > 3 || (major == 3 && minor >= 3) {
         result.extend(OPAQUE_STRUCTS_RUBY_3_3)
     }
@@ -217,16 +223,19 @@ mod tests {
         // Ruby 3.2.x - too old for 3.3 structs
         assert!(get_version_specific_opaque_structs(Some((3, 2))).is_empty());
 
+        let mut ruby_3 = OPAQUE_STRUCTS_BEFORE_RUBY_4.to_vec();
+        ruby_3.extend(&OPAQUE_STRUCTS_RUBY_3_3);
+
         // Ruby 3.3.x - should include 3.3 structs
         assert_eq!(
             get_version_specific_opaque_structs(Some((3, 3))),
-            OPAQUE_STRUCTS_RUBY_3_3.to_vec()
+            ruby_3
         );
 
         // Ruby 3.4.x - should include 3.3 structs
         assert_eq!(
             get_version_specific_opaque_structs(Some((3, 4))),
-            OPAQUE_STRUCTS_RUBY_3_3.to_vec()
+            ruby_3
         );
 
         // Ruby 4.0.x - should include 3.3 structs (this was the bug!)
