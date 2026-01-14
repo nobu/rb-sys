@@ -168,6 +168,24 @@ impl_rtypeddata_get_data(VALUE obj)
 #endif
 }
 
+bool
+impl_typeddata_inherited_p(const struct rb_data_type_struct *child, const struct rb_data_type_struct *parent)
+{
+  return rb_typeddata_inherited_p(child, parent);
+}
+
+bool
+impl_typeddata_is_kind_of(VALUE obj, const struct rb_data_type_struct *data_type)
+{
+  return rb_typeddata_is_kind_of(obj, data_type);
+}
+
+void *
+impl_check_typeddata(VALUE obj, const struct rb_data_type_struct *data_type)
+{
+  return rb_check_typeddata(obj, data_type);
+}
+
 VALUE
 impl_id2sym(ID id)
 {

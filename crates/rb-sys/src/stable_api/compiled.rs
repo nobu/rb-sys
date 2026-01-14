@@ -91,6 +91,15 @@ extern "C" {
     #[link_name = "impl_rtypeddata_get_data"]
     fn impl_rtypeddata_get_data(obj: VALUE) -> *mut c_void;
 
+    #[link_name = "impl_typeddata_inherited_p"]
+    fn impl_typeddata_inherited_p(child: *const crate::rb_data_type_t, parent: *const crate::rb_data_type_t) -> bool;
+
+    #[link_name = "impl_typeddata_is_kind_of"]
+    fn impl_typeddata_is_kind_of(obj: VALUE, data_type: *const crate::rb_data_type_t) -> bool;
+
+    #[link_name = "impl_check_typeddata"]
+    fn impl_check_typeddata(obj: VALUE, data_type: *const crate::rb_data_type_t) -> *mut c_void;
+
     // Symbol/ID conversion functions
     #[link_name = "impl_id2sym"]
     fn impl_id2sym(id: crate::ID) -> VALUE;
@@ -273,6 +282,21 @@ impl StableApiDefinition for Definition {
     #[inline]
     unsafe fn rtypeddata_get_data(&self, obj: VALUE) -> *mut c_void {
         impl_rtypeddata_get_data(obj)
+    }
+
+    #[inline]
+    fn rb_typeddata_inherited_p(&self, child: *const crate::rb_data_type_t, parent: *const crate::rb_data_type_t) -> bool {
+        unsafe { impl_typeddata_inherited_p(child, parent) }
+    }
+
+    #[inline]
+    unsafe fn rb_typeddata_is_kind_of(&self, obj: VALUE, data_type: *const crate::rb_data_type_t) -> bool {
+        impl_typeddata_is_kind_of(obj, data_type)
+    }
+
+    #[inline]
+    unsafe fn rb_check_typeddata(&self, obj: VALUE, data_type: *const crate::rb_data_type_t) -> *mut c_void {
+        impl_check_typeddata(obj, data_type)
     }
 
     #[inline]

@@ -211,6 +211,26 @@ pub trait StableApiDefinition {
     /// is valid and points to an RTypedData object.
     unsafe fn rtypeddata_get_data(&self, obj: VALUE) -> *mut std::ffi::c_void;
 
+    /// Checks if child inherits parent.
+    fn rb_typeddata_inherited_p(&self, child: *const crate::rb_data_type_t, parent: *const crate::rb_data_type_t) -> bool;
+
+    /// Checks if the given object is a kind of the given data type.
+    ///
+    /// # Safety
+    /// This function is unsafe because it dereferences a raw pointer to get
+    /// access to underlying Ruby data. The caller must ensure that the pointer
+    /// is valid and points to a T_DATA object.
+    unsafe fn rb_typeddata_is_kind_of(&self, obj: VALUE, data_type: *const crate::rb_data_type_t) -> bool;
+
+    /// Gets the data pointer from an RTypedData object.
+    /// If the object is not a kind of the data type, raises a TypeError.
+    ///
+    /// # Safety
+    /// This function is unsafe because it dereferences a raw pointer to get
+    /// access to underlying Ruby data. The caller must ensure that the pointer
+    /// is valid and points to an RTypedData object.
+    unsafe fn rb_check_typeddata(&self, obj: VALUE, data_type: *const crate::rb_data_type_t) -> *mut std::ffi::c_void;
+
     /// Convert Fixnum to long (akin to `FIX2LONG`).
     ///
     /// Extracts the integer value from a Fixnum VALUE.

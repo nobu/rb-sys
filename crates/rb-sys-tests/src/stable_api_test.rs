@@ -697,6 +697,9 @@ fn test_rtypeddata_functions_with_usage() {
 
         let data_ptr = stable_api::get_default().rtypeddata_get_data(obj);
         assert!(!data_ptr.is_null());
+
+        let checked_ptr = stable_api::get_default().rb_check_typeddata(gen_typed_data(), type_ptr);
+        assert!(!checked_ptr.is_null());
     }
 }
 
